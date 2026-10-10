@@ -1,0 +1,4 @@
+.bangumi-cache/
+.catalog-cache/
+.DS_Store
+.openai/
