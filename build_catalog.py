@@ -1,6 +1,7 @@
 """Build the anime catalog from Bangumi's public subject search API."""
 from concurrent.futures import ThreadPoolExecutor
 from datetime import date, timedelta
+import gzip
 import html
 import json
 import re
@@ -198,10 +199,14 @@ def main():
         if local_cover.exists():
             item['coverImage']['large'] = f"covers/{item['id']}.jpg"
 
-    OUTPUT.write_text(json.dumps(catalog, ensure_ascii=False, separators=(',', ':')), encoding='utf-8')
+    serialized = json.dumps(catalog, ensure_ascii=False, separators=(',', ':')).encode('utf-8')
+    OUTPUT.write_bytes(serialized)
+    with (ROOT / 'dist' / 'anime.json.gz').open('wb') as compressed_file:
+        with gzip.GzipFile(filename='', fileobj=compressed_file, mode='wb', compresslevel=9, mtime=0) as compressed:
+            compressed.write(serialized)
     fetched_count = sum(total for _, _, total in responses)
     print(f'Fetched {fetched_count} qualifying entries; kept {len(catalog)} with cover and summary.', flush=True)
-    print(f'Wrote {OUTPUT} ({OUTPUT.stat().st_size:,} bytes).', flush=True)
+    print(f'Wrote {OUTPUT} ({OUTPUT.stat().st_size:,} bytes) and dist/anime.json.gz ({(ROOT / "dist" / "anime.json.gz").stat().st_size:,} bytes).', flush=True)
 
 
 if __name__ == '__main__':

@@ -131,8 +131,21 @@ function initHero() {
 }
 async function init() {
   try {
-    const response=await fetch('anime.json'); if(!response.ok)throw Error('无法读取目录');
-    catalog=(await response.json()).filter(item=>item?.id&&item?.startDate?.year&&item.startDate.year<=2026);
+    let entries;
+    if('DecompressionStream' in window) {
+      try {
+        const compressed=await fetch('anime.json.gz');
+        if(!compressed.ok)throw Error('无法读取压缩目录');
+        entries=await new Response(compressed.body.pipeThrough(new DecompressionStream('gzip'))).json();
+      } catch {
+        const response=await fetch('anime.json'); if(!response.ok)throw Error('无法读取目录');
+        entries=await response.json();
+      }
+    } else {
+      const response=await fetch('anime.json'); if(!response.ok)throw Error('无法读取目录');
+      entries=await response.json();
+    }
+    catalog=entries.filter(item=>item?.id&&item?.startDate?.year&&item.startDate.year<=2026);
     catalog.forEach(item=>{item.searchText=normalized([titleOf(item),item.cn,item.title.romaji,item.title.native,aliasOf(item),item.startDate.year].join(' '));});
     catalog.sort((a,b)=>b.popularity-a.popularity);
     $('#metric-total').textContent=catalog.length.toLocaleString('zh-CN');
