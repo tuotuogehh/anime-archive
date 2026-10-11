@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#0b0d1b">
-  <meta name="description" content="番界宇宙：跨越20与21世纪的动漫作品目录。按年代、题材和形式探索，搜索作品，建立自己的片单。">
+  <meta name="description" content="番界宇宙：收录1900年至今的动画作品，展示封面、作品简介与 Bangumi 评分，支持按年代、题材和形式筛选。">
   <title>番界宇宙 · 跨越时代的动漫大合集</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -33,9 +33,9 @@
       <div class="hero-copy">
         <div class="eyebrow"><span class="eyebrow-dot"></span> THE UNIVERSE OF ANIME <span class="eyebrow-line"></span> VOL. 01</div>
         <h1 id="hero-title">穿越时代<br><em>追番无界<span class="title-star">✳</span></em></h1>
-        <p>从经典老番到新世代话题作。把横跨两个世纪的心动、热血与想象，收进同一座动漫宇宙。</p>
+        <p>从 1900 年代的动画先声，到 2026 年的新世代作品。按年代、题材和形式探索，认识每一段动画历史。</p>
         <div class="hero-actions"><a href="#explore" class="primary-btn">开始探索 <span>↗</span></a><button type="button" class="secondary-btn" id="random-pick">随机邂逅 <span>✦</span></button></div>
-        <div class="hero-metrics"><div><strong id="metric-total">—</strong><span>精选作品</span></div><i></i><div><strong>20—21<span class="metric-small">世纪</span></strong><span>跨时代收录</span></div><i></i><div><strong id="metric-years">—</strong><span>年代跨度</span></div></div>
+        <div class="hero-metrics"><div><strong id="metric-total">—</strong><span>收录作品</span></div><i></i><div><strong>20—21<span class="metric-small">世纪</span></strong><span>跨时代收录</span></div><i></i><div><strong id="metric-years">—</strong><span>年代跨度</span></div></div>
       </div>
       <div class="hero-art" aria-label="精选动漫封面拼贴">
         <div class="orbit orbit-a"></div><div class="orbit orbit-b"></div>
@@ -44,7 +44,7 @@
         <div class="cover-stack stack-mid" id="hero-cover-1"></div>
         <div class="cover-stack stack-front" id="hero-cover-0"><div class="cover-placeholder">ANIME<br>ATLAS</div></div>
         <div class="hero-sticker"><span>✳</span> 你的下一部<br>本命番在这里</div>
-        <div class="hero-serial">STORIES ACROSS GENERATIONS / 1963—2023</div>
+        <div class="hero-serial">STORIES ACROSS GENERATIONS / 1900—2026</div>
       </div>
       <div class="hero-bottom"><span>SCROLL TO EXPLORE</span><span>↓</span><span>从经典到新番，一次看个够</span></div>
     </section>
@@ -60,7 +60,7 @@
       <div class="section-heading catalog-heading"><div><div class="overline">02 / THE COLLECTION</div><h2 id="catalog-title">宇宙图鉴<span class="heading-mark">.</span></h2><p id="catalog-subtitle">每一部作品，都是通往另一个世界的入口。</p></div><div class="collection-badge"><span>✦</span><strong id="badge-total">—</strong><small>部作品，持续探索</small></div></div>
       <div class="filter-panel">
         <label class="catalog-search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/></svg><input id="search-input" type="search" placeholder="搜索作品名 / 日文 / 英文 / 年份…" autocomplete="off"><span class="search-hint">⌘ K</span></label>
-        <div class="filter-row"><div class="genre-tabs" id="genre-tabs" role="group" aria-label="题材筛选"></div><div class="filter-selects"><label><span>形式</span><select id="format-filter"><option value="all">全部形式</option><option value="TV">TV 动画</option><option value="MOVIE">动画电影</option><option value="OVA">OVA</option><option value="ONA">网络动画</option><option value="SPECIAL">特别篇</option></select></label><label><span>排序</span><select id="sort-filter"><option value="popular">人气优先</option><option value="newest">最新优先</option><option value="oldest">经典优先</option><option value="score">评分优先</option><option value="title">名称 A–Z</option></select></label></div></div>
+        <div class="filter-row"><div class="genre-tabs" id="genre-tabs" role="group" aria-label="题材筛选"></div><div class="filter-selects"><label><span>形式</span><select id="format-filter"><option value="all">全部形式</option><option value="TV">TV 动画</option><option value="MOVIE">动画电影</option><option value="OVA">OVA / OAD</option><option value="ONA">网络动画</option><option value="SPECIAL">特别篇</option><option value="TV_SHORT">短篇动画</option><option value="MUSIC">音乐动画</option><option value="DYNAMIC_COMIC">动态漫画</option><option value="OTHER">其他形式</option></select></label><label><span>排序</span><select id="sort-filter"><option value="popular">人气优先</option><option value="newest">最新优先</option><option value="oldest">经典优先</option><option value="score">评分优先</option><option value="title">名称 A–Z</option></select></label></div></div>
       </div>
       <div class="results-bar"><div><span class="results-star">✳</span> <strong id="result-count">—</strong> 部作品 <span id="active-filter-note"></span></div><button type="button" id="reset-filters">重置筛选 ↺</button></div>
       <div class="anime-grid" id="anime-grid" aria-live="polite"></div>

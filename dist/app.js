@@ -1,6 +1,12 @@
 const $ = (selector) => document.querySelector(selector);
 const decadeDefs = [
-  {key:'all', label:'全部年代', years:'跨越世纪', note:'一起出发'},
+  {key:'all', label:'全部年代', years:'1900—至今', note:'完整探索'},
+  {key:'1900', label:'1900s', years:'动画初生', note:'无声银幕'},
+  {key:'1910', label:'1910s', years:'早期探索', note:'逐格想象'},
+  {key:'1920', label:'1920s', years:'默片时代', note:'活动影像'},
+  {key:'1930', label:'1930s', years:'走向有声', note:'短片先声'},
+  {key:'1940', label:'1940s', years:'战后重建', note:'工作室启程'},
+  {key:'1950', label:'1950s', years:'电视前夜', note:'长片起步'},
   {key:'1960', label:'1960s', years:'黄金萌芽', note:'电视动画登场'},
   {key:'1970', label:'1970s', years:'机甲觉醒', note:'想象力爆发'},
   {key:'1980', label:'1980s', years:'经典浪潮', note:'光影新纪元'},
@@ -12,9 +18,12 @@ const decadeDefs = [
 const genreDefs = [
   ['all','全部题材'],['Action','热血动作'],['Adventure','冒险'],['Fantasy','奇幻'],
   ['Sci-Fi','科幻'],['Romance','恋爱'],['Comedy','喜剧'],['Drama','剧情'],
-  ['Slice of Life','日常'],['Mystery','悬疑'],['Sports','运动'],['Supernatural','超自然']
+  ['Slice of Life','日常治愈'],['Mystery','推理悬疑'],['Sports','运动'],['Supernatural','超自然'],
+  ['Horror','恐怖惊悚'],['Mecha','机甲'],['Music','音乐偶像'],['School','校园'],
+  ['Historical','历史'],['Kids','少儿'],['Workplace','职场'],['Psychological','心理'],
+  ['Shoujo','少女向'],['Shounen','少年向'],['Seinen','青年向'],['Josei','女性向']
 ];
-const formatNames = {TV:'TV 动画',MOVIE:'动画电影',OVA:'OVA',ONA:'网络动画',SPECIAL:'特别篇',TV_SHORT:'短篇动画',MUSIC:'音乐动画'};
+const formatNames = {TV:'TV 动画',MOVIE:'动画电影',OVA:'OVA / OAD',ONA:'网络动画',SPECIAL:'特别篇',TV_SHORT:'短篇动画',MUSIC:'音乐动画',DYNAMIC_COMIC:'动态漫画',OTHER:'其他形式'};
 const genreNames = Object.fromEntries(genreDefs);
 const aliases = [
   ['Shingeki no Kyojin','进击的巨人'],['Kimetsu no Yaiba','鬼灭之刃'],['Fullmetal Alchemist','钢之炼金术师'],
@@ -67,7 +76,7 @@ function safeUrl(value) { try { const url = new URL(value); return url.protocol 
 function titleOf(item) { return item.title.english || item.title.romaji || item.title.native || '未命名作品'; }
 function aliasOf(item) { const text = `${item.title.english || ''} ${item.title.romaji || ''}`.toLowerCase(); return aliases.filter(([key]) => text.includes(key.toLowerCase())).map(([,value]) => value).join(' '); }
 function displayTitle(item) { return item.cn || aliasOf(item).split(' ')[0] || titleOf(item); }
-function decadeMatch(item,key) { const year=item.startDate.year; return key==='all' || (key==='pre60' ? year<1960 : year>=Number(key)&&year<Number(key)+10); }
+function decadeMatch(item,key) { const year=item.startDate.year; return key==='all' || (year>=Number(key)&&year<Number(key)+10); }
 function cover(item) { const value=item.coverImage?.large||'';return /^covers\/\d+\.jpg$/.test(value)?value:safeUrl(value); }
 function normalized(value) { return String(value||'').toLowerCase().normalize('NFKC').replace(/\s+/g,'').replace(/[·・:：!！?？'’]/g,''); }
 function filterCatalog() {
@@ -77,7 +86,7 @@ function filterCatalog() {
     if(state.genre!=='all'&&!item.genres.includes(state.genre)) return false;
     if(state.format!=='all'&&item.format!==state.format) return false;
     if(state.onlyFavorites&&!favorites.has(item.id)) return false;
-    if(query && !normalized([titleOf(item),item.cn,item.title.romaji,item.title.native,aliasOf(item),item.startDate.year].join(' ')).includes(query)) return false;
+    if(query && !(item.searchText||'').includes(query)) return false;
     return true;
   });
   const sorts={popular:(a,b)=>b.popularity-a.popularity,newest:(a,b)=>b.startDate.year-a.startDate.year||b.popularity-a.popularity,oldest:(a,b)=>a.startDate.year-b.startDate.year||b.popularity-a.popularity,score:(a,b)=>(b.averageScore||0)-(a.averageScore||0),title:(a,b)=>titleOf(a).localeCompare(titleOf(b))};
@@ -124,8 +133,9 @@ async function init() {
   try {
     const response=await fetch('anime.json'); if(!response.ok)throw Error('无法读取目录');
     catalog=(await response.json()).filter(item=>item?.id&&item?.startDate?.year&&item.startDate.year<=2026);
+    catalog.forEach(item=>{item.searchText=normalized([titleOf(item),item.cn,item.title.romaji,item.title.native,aliasOf(item),item.startDate.year].join(' '));});
     catalog.sort((a,b)=>b.popularity-a.popularity);
-    $('#metric-total').textContent=catalog.length.toLocaleString('zh-CN')+'+';
+    $('#metric-total').textContent=catalog.length.toLocaleString('zh-CN');
     $('#badge-total').textContent=catalog.length.toLocaleString('zh-CN');
     const years=catalog.map(item=>item.startDate.year);$('#metric-years').textContent=`${Math.min(...years)}—${Math.max(...years)}`;
     initHero(); render();
