@@ -100,12 +100,13 @@ function card(item) {
   const saved=favorites.has(item.id);
   const image=cover(item);
   const alias=displayTitle(item);
-  return `<article class="anime-card"><button type="button" class="anime-card-main" data-open="${item.id}" aria-label="查看${esc(alias)}详情"><div class="poster-wrap">${image?`<img src="${esc(image)}" alt="${esc(titleOf(item))}封面" loading="lazy" onerror="this.style.display='none'">`:`<div class="poster-fallback">${esc(alias)}</div>`}<span class="format-pill">${esc(formatNames[item.format]||item.format||'动画')}</span>${item.averageScore?`<span class="score-pill"><span>★</span> ${(item.averageScore/10).toFixed(1)} <small>Bangumi</small></span>`:''}</div><div class="card-meta"><span>${item.startDate.year}</span><i></i><span>${esc(formatNames[item.format]||item.format||'动画')}</span></div><h3 class="card-title" title="${esc(alias)}">${esc(alias)}</h3><p class="card-sub" title="${esc(titleOf(item))}">${esc(titleOf(item))}</p><p class="card-summary">${esc(item.description||'点击了解这部作品的更多信息。')}</p></button><button type="button" class="favorite-btn ${saved?'saved':''}" data-favorite="${item.id}" aria-label="${saved?'从片单移除':'加入片单'}：${esc(alias)}" aria-pressed="${saved}">${saved?'★':'☆'}</button></article>`;
+  return `<article class="anime-card"><button type="button" class="anime-card-main" data-open="${item.id}" aria-label="查看${esc(alias)}详情"><div class="poster-wrap">${image?`<img src="${esc(image)}" alt="${esc(titleOf(item))}封面" data-fallback="${esc(alias)}" loading="lazy" onerror="this.onerror=null;this.replaceWith(Object.assign(document.createElement('div'),{className:'poster-fallback',textContent:this.dataset.fallback}))">`:`<div class="poster-fallback">${esc(alias)}</div>`}<span class="format-pill">${esc(formatNames[item.format]||item.format||'动画')}</span>${item.averageScore?`<span class="score-pill"><span>★</span> ${(item.averageScore/10).toFixed(1)} <small>Bangumi</small></span>`:''}</div><div class="card-meta"><span>${item.startDate.year}</span><i></i><span>${esc(formatNames[item.format]||item.format||'动画')}</span></div><h3 class="card-title" title="${esc(alias)}">${esc(alias)}</h3><p class="card-sub" title="${esc(titleOf(item))}">${esc(titleOf(item))}</p><p class="card-summary">${esc(item.description||'点击了解这部作品的更多信息。')}</p></button><button type="button" class="favorite-btn ${saved?'saved':''}" data-favorite="${item.id}" aria-label="${saved?'从片单移除':'加入片单'}：${esc(alias)}" aria-pressed="${saved}">${saved?'★':'☆'}</button></article>`;
 }
 function render() {
   renderDecades(); renderGenres();
   const result=filterCatalog();
   $('#anime-grid').innerHTML=result.slice(0,state.visible).map(card).join('');
+  $('#anime-grid').setAttribute('aria-busy','false');
   $('#result-count').textContent=result.length.toLocaleString('zh-CN');
   $('#fav-count').textContent=favorites.size;
   $('#empty-state').hidden=result.length!==0;
@@ -130,6 +131,9 @@ function initHero() {
   picks.forEach((item,index)=>{if(item&&cover(item))$(`#hero-cover-${index}`).innerHTML=`<img src="${esc(cover(item))}" alt="${esc(titleOf(item))}封面">`;});
 }
 async function init() {
+  $('#anime-grid').setAttribute('aria-busy','true');
+  $('#anime-grid').innerHTML='<div class="catalog-loading" role="status"><span class="loading-spinner" aria-hidden="true"></span><span>正在载入作品目录…</span><small>首次打开需要读取作品资料，请稍候片刻</small></div>';
+  $('#result-count').textContent='…';
   try {
     let entries;
     if('DecompressionStream' in window) {
@@ -152,7 +156,7 @@ async function init() {
     $('#badge-total').textContent=catalog.length.toLocaleString('zh-CN');
     const years=catalog.map(item=>item.startDate.year);$('#metric-years').textContent=`${Math.min(...years)}—${Math.max(...years)}`;
     initHero(); render();
-  } catch(error) { $('#anime-grid').innerHTML='<p class="load-error">目录加载失败，请刷新页面重试。</p>'; $('#result-count').textContent='0'; console.error(error); }
+  } catch(error) { $('#anime-grid').setAttribute('aria-busy','false'); $('#anime-grid').innerHTML='<div class="catalog-load-error" role="alert"><strong>作品目录暂时无法载入</strong><span>请检查网络连接后重试。</span><button type="button" id="retry-load">重新加载</button></div>'; $('#result-count').textContent='0'; console.error(error); }
 }
 $('#decade-grid').addEventListener('click',event=>{const target=event.target.closest('[data-decade]');if(!target)return;state.decade=target.dataset.decade;state.visible=25;render();$('#explore').scrollIntoView({behavior:'smooth'});});
 $('#genre-tabs').addEventListener('click',event=>{const target=event.target.closest('[data-genre]');if(!target)return;state.genre=target.dataset.genre;state.visible=25;render();});
@@ -164,6 +168,7 @@ $('#detail-content').addEventListener('click',event=>{const target=event.target.
 $('#dialog-close').addEventListener('click',()=>$('#detail-dialog').close());
 $('#detail-dialog').addEventListener('click',event=>{if(event.target===$('#detail-dialog'))$('#detail-dialog').close();});
 $('#load-more').addEventListener('click',()=>{state.visible+=25;render();});
+$('#anime-grid').addEventListener('click',event=>{if(event.target.closest('#retry-load'))init();});
 $('#reset-filters').addEventListener('click',reset);$('#empty-reset').addEventListener('click',reset);
 $('#nav-favorites').addEventListener('click',()=>{state.onlyFavorites=!state.onlyFavorites;state.visible=25;render();$('#explore').scrollIntoView({behavior:'smooth'});$('#mobile-menu').setAttribute('aria-expanded','false');$('.main-nav').classList.remove('open');});
 $('#search-shortcut').addEventListener('click',()=>{$('#explore').scrollIntoView({behavior:'smooth'});setTimeout(()=>$('#search-input').focus(),300);});

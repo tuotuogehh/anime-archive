@@ -63,7 +63,7 @@
         <div class="filter-row"><div class="genre-tabs" id="genre-tabs" role="group" aria-label="题材筛选"></div><div class="filter-selects"><label><span>形式</span><select id="format-filter"><option value="all">全部形式</option><option value="TV">TV 动画</option><option value="MOVIE">动画电影</option><option value="OVA">OVA / OAD</option><option value="ONA">网络动画</option><option value="SPECIAL">特别篇</option><option value="TV_SHORT">短篇动画</option><option value="MUSIC">音乐动画</option><option value="DYNAMIC_COMIC">动态漫画</option><option value="OTHER">其他形式</option></select></label><label><span>排序</span><select id="sort-filter"><option value="popular">人气优先</option><option value="newest">最新优先</option><option value="oldest">经典优先</option><option value="score">评分优先</option><option value="title">名称 A–Z</option></select></label></div></div>
       </div>
       <div class="results-bar"><div><span class="results-star">✳</span> <strong id="result-count">—</strong> 部作品 <span id="active-filter-note"></span></div><button type="button" id="reset-filters">重置筛选 ↺</button></div>
-      <div class="anime-grid" id="anime-grid" aria-live="polite"></div>
+      <div class="anime-grid" id="anime-grid" aria-live="polite" aria-busy="true"><div class="catalog-loading" role="status"><span class="loading-spinner" aria-hidden="true"></span><span>正在载入作品目录…</span><small>首次打开需要读取作品资料，请稍候片刻</small></div></div>
       <div class="empty-state" id="empty-state" hidden><div class="empty-icon">✳</div><h3>这个宇宙暂时没有结果</h3><p>换个关键词或筛选条件，再试一次吧。</p><button type="button" id="empty-reset" class="primary-btn">查看全部作品 ↗</button></div>
       <div class="load-wrap"><button type="button" id="load-more" class="load-more" hidden>继续探索更多作品 <span>↓</span></button></div>
     </section>
